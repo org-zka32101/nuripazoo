@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ユーザー認証状態の判定
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return request.auth.uid == uid;
+    }
+
+    function isValidUser(uid) {
+      return isAuthenticated() && isOwner(uid);
+    }
+
+    // ==================== ユーザーコレクション ====================
+    match /users/{uid} {
+      // ユーザー情報: 本人のみ読取り・更新
+      // 【重要】なつき度・所持動物・交流情報は直接書込み禁止 → Cloud Functions経由に統一
+      allow read: if isValidUser(uid);
+      allow update: if isValidUser(uid) &&
+                       !request.resource.data.keys().hasAny(['animals', 'affectionLevel', 'lastInteracted']);
+      allow create: if isValidUser(uid);
+      allow delete: if false; // ユーザー削除は禁止
+
+      // ユーザーが所有する動物コレクション（読取り専用）
+      match /animals/{animalId} {
+        // 読取り: 本人のみ
+        allow read: if isValidUser(uid);
+        // 書込み: Cloud Functions のみ
+        allow write: if request.auth.token.firebase.sign_in_provider == 'custom';
+      }
+
+      // パズルセッション（読取り専用）
+      match /puzzle_sessions/{sessionId} {
+        allow read: if isValidUser(uid);
+        allow write: if isValidUser(uid) &&
+                        request.resource.data.keys().hasOnly(['id', 'uid', 'animalId', 'startedAt', 'completedAt', 'mistakeCount']);
+      }
+
+      // 群れボーナス情報（読取り専用）
+      match /herd_bonuses/{habitat} {
+        allow read: if isValidUser(uid);
+        // 書込み: Cloud Functions のみ
+        allow write: if request.auth.token.firebase.sign_in_provider == 'custom';
+      }
+
+      // ユーザー設定
+      match /settings/{document=**} {
+        allow read: if isValidUser(uid);
+        allow write: if isValidUser(uid);
+      }
+    }
+
+    // ==================== 動物マスタデータ（読取り専用） ====================
+    match /animals_master/{animalId} {
+      // 全ユーザーが読取り可能（公開データ）
+      allow read: if isAuthenticated();
+      // 書込み: Cloud Functions のみ
+      allow write: if request.auth.token.firebase.sign_in_provider == 'custom';
+    }
+
+    // ==================== シェアアセット ====================
+    match /share_assets/{assetId} {
+      // 本人のみ読取り・書込み
+      allow read, write: if isValidUser(resource.data.uid);
+    }
+
+    // ==================== Analytics イベント（特別処理） ====================
+    match /analytics/{document=**} {
+      // Analytics は特別許可
+      allow write: if request.auth != null;
+      allow read: if false; // 読取り禁止
+    }
+
+    // ==================== デフォルト（全て拒否） ====================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
