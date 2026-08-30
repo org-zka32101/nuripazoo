@@ -1,7 +1,20 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'firebase_options.dart';
+import 'views/onboarding_screen.dart';
+import 'views/puzzle_screen.dart';
+import 'views/home_screen.dart';
+import 'viewmodels/index.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Firebase初期化
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
     const ProviderScope(
       child: NuripazuApp(),
@@ -9,17 +22,23 @@ void main() {
   );
 }
 
-class NuripazuApp extends StatelessWidget {
+class NuripazuApp extends ConsumerWidget {
   const NuripazuApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+
     return MaterialApp(
       title: 'ぬりパズ動物園',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
         brightness: Brightness.light,
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+        ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
@@ -30,11 +49,31 @@ class NuripazuApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       themeMode: ThemeMode.system,
-      home: const Scaffold(
-        body: Center(
-          child: Text('ぬりパズ動物園 - Development in Progress'),
+      home: authState.when(
+        data: (user) => user == null
+            ? const OnboardingScreen()
+            : const HomeScreen(),
+        loading: () => const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        error: (error, stack) => Scaffold(
+          body: Center(
+            child: Text('エラー: $error'),
+          ),
         ),
       ),
+      routes: {
+        '/onboarding': (context) => const OnboardingScreen(),
+        '/puzzle': (context) => const PuzzleScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/animal_detail': (context) => const Scaffold(
+          body: Center(
+            child: Text('Animal Detail - Coming Soon'),
+          ),
+        ),
+      },
     );
   }
 }
