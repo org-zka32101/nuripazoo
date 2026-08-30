@@ -2,3 +2,8 @@
 export 'onboarding_screen.dart';
 export 'puzzle_screen.dart';
 export 'home_screen.dart';
+export 'animal_detail_screen.dart';
+export 'collection_screen.dart';
+export 'settings_screen.dart';
+export 'app_shell.dart';
+export 'herd_scene_screen.dart';

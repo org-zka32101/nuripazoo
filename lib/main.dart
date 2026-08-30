@@ -5,6 +5,9 @@ import 'firebase_options.dart';
 import 'views/onboarding_screen.dart';
 import 'views/puzzle_screen.dart';
 import 'views/home_screen.dart';
+import 'views/animal_detail_screen.dart';
+import 'views/app_shell.dart';
+import 'views/herd_scene_screen.dart';
 import 'viewmodels/index.dart';
 
 void main() async {
@@ -52,7 +55,7 @@ class NuripazuApp extends ConsumerWidget {
       home: authState.when(
         data: (user) => user == null
             ? const OnboardingScreen()
-            : const HomeScreen(),
+            : const AppShell(),
         loading: () => const Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
@@ -67,12 +70,20 @@ class NuripazuApp extends ConsumerWidget {
       routes: {
         '/onboarding': (context) => const OnboardingScreen(),
         '/puzzle': (context) => const PuzzleScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/animal_detail': (context) => const Scaffold(
-          body: Center(
-            child: Text('Animal Detail - Coming Soon'),
-          ),
-        ),
+        '/home': (context) => const AppShell(),
+        '/animal_detail': (context) {
+          final animalId = ModalRoute.of(context)?.settings.arguments as String?;
+          return AnimalDetailScreen(
+            animalId: animalId ?? 'unknown',
+          );
+        },
+        '/herd_scene': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+          return HerdSceneScreen(
+            habitat: args?['habitat'] ?? 'unknown',
+            animalIds: args?['animalIds'] ?? [],
+          );
+        },
       },
     );
   }
