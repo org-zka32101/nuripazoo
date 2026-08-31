@@ -12,3 +12,6 @@ export 'affection_provider.dart';
 
 // Monetization
 export 'monetization_provider.dart';
+
+// Animation & Effects
+export 'animation_provider.dart';

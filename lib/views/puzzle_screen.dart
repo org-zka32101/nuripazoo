@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nuripazu/viewmodels/index.dart';
+import 'package:nuripazu/widgets/lottie_animation_widget.dart';
 
 /// ジェムパズル画面
 /// 【Aha Moment最短動線】
@@ -185,115 +186,141 @@ class PuzzleScreen extends ConsumerWidget {
     );
   }
 
-  // 完成画面（Aha Moment）
+  // 完成画面（Aha Moment）- Phase 6C: AnimationSequence統合
   Widget _buildCompletionScreen(
     BuildContext context,
     WidgetRef ref,
     PuzzleSessionState puzzleState,
   ) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 完成演出（Lottie予定）
-          Container(
-            width: 200,
-            height: 200,
-            decoration: BoxDecoration(
-              color: Colors.orange.shade100,
-              shape: BoxShape.circle,
+    // アニメーションパス取得
+    final celebrationPath =
+        ref.watch(puzzleCompletionAnimationProvider);
+    final animalAppearPath = ref.watch(animalAppearAnimationProvider);
+
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 32),
+
+            // AnimationSequence: celebrationConfetti → animalAppear
+            SizedBox(
+              height: 300,
+              child: AnimationSequence(
+                animationPaths: [
+                  celebrationPath,
+                  animalAppearPath,
+                ],
+                durations: [
+                  const Duration(seconds: 2),
+                  const Duration(seconds: 1),
+                ],
+                onSequenceComplete: () {
+                  // アニメーション完了後のコールバック
+                  ref.refresh(animationPlaybackProvider);
+                },
+              ),
             ),
-            child: const Center(
-              child: Icon(
-                Icons.celebration,
-                size: 80,
+
+            const SizedBox(height: 24),
+
+            // 完成メッセージ
+            const Text(
+              'パズルが完成しました!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
                 color: Colors.orange,
               ),
             ),
-          ),
 
-          const SizedBox(height: 32),
+            const SizedBox(height: 16),
 
-          // 完成メッセージ
-          const Text(
-            'パズルが完成しました!',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.orange,
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // 動物が現れる演出（簡略版）
-          const Text(
-            '新しい動物があらわれた!',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
-          ),
-
-          const SizedBox(height: 48),
-
-          // 次へボタン
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              foregroundColor: Colors.white,
+            // 動物が現れる演出メッセージ
+            Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: 32,
-                vertical: 16,
+                horizontal: 24,
+                vertical: 12,
               ),
-              shape: RoundedRectangleBorder(
+              decoration: BoxDecoration(
+                color: Colors.amber.shade50,
+                border: Border.all(color: Colors.amber),
                 borderRadius: BorderRadius.circular(12),
               ),
+              child: const Text(
+                '✨ 新しい動物があらわれた! ✨',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber,
+                ),
+              ),
             ),
-            onPressed: () async {
-              // なつき度 Lv1 で動物を登録（Cloud Functions）
-              try {
-                await ref
-                    .read(
-                      registerNewAnimalProvider(puzzleState.animalId).future,
-                    )
-                    .then((_) async {
-                  // 動物数を確認してペイウォール判定
-                  final animalCount = await ref
-                      .read(userAnimalCountProvider.future);
 
-                  if (context.mounted) {
-                    // 2体目完成時にペイウォール表示
-                    if (animalCount == 2) {
-                      Navigator.of(context).pushNamed(
-                        '/paywall',
-                        arguments: {
-                          'animalId': puzzleState.animalId,
-                          'onDismiss': () {
-                            Navigator.of(context)
-                                .pushReplacementNamed('/home');
+            const SizedBox(height: 48),
+
+            // 次へボタン
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () async {
+                // なつき度 Lv1 で動物を登録（Cloud Functions）
+                try {
+                  await ref
+                      .read(
+                        registerNewAnimalProvider(puzzleState.animalId)
+                            .future,
+                      )
+                      .then((_) async {
+                    // 動物数を確認してペイウォール判定
+                    final animalCount = await ref
+                        .read(userAnimalCountProvider.future);
+
+                    if (context.mounted) {
+                      // 2体目完成時にペイウォール表示
+                      if (animalCount == 2) {
+                        Navigator.of(context).pushNamed(
+                          '/paywall',
+                          arguments: {
+                            'animalId': puzzleState.animalId,
+                            'onDismiss': () {
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/home');
+                            },
                           },
-                        },
-                      );
-                    } else {
-                      // 1体目またはそれ以降は通常フロー
-                      Navigator.of(context)
-                          .pushReplacementNamed('/home');
+                        );
+                      } else {
+                        // 1体目またはそれ以降は通常フロー
+                        Navigator.of(context)
+                            .pushReplacementNamed('/home');
+                      }
                     }
-                  }
-                });
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('エラー: $e')),
-                );
-              }
-            },
-            child: const Text(
-              '動物園へ戻る',
-              style: TextStyle(fontSize: 16),
+                  });
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('エラー: $e')),
+                  );
+                }
+              },
+              child: const Text(
+                '動物園へ戻る',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
-          ),
-        ],
+
+            const SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }

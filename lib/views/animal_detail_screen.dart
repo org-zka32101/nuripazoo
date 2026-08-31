@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nuripazu/viewmodels/index.dart';
+import 'package:nuripazu/widgets/lottie_animation_widget.dart';
 
 /// 動物詳細画面・交流画面
 /// なつき度Lv表示、日替わり交流アクション、群れボーナス確認
@@ -332,24 +334,46 @@ class AnimalDetailScreen extends ConsumerWidget {
       label: Text(label),
       onPressed: () async {
         try {
+          // タップ時の軽いハプティクス
+          if (ref.watch(hapticEnabledProvider)) {
+            await HapticFeedback.lightImpact();
+          }
+
           // Cloud Functions呼び出し
           await ref
               .read(
                 interactWithAnimalProvider(userAnimal.animalId).future,
               )
               .then((_) {
-            // 成功演出
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  '$label しました！ なつき度が上がった！',
-                ),
-                backgroundColor: Colors.green,
+            // 交流タイプ判定
+            String interactionType = _getInteractionType(label);
+
+            // 性格別リアクションアニメーション取得
+            final reactionPath = ref.watch(
+              interactionReactionProvider(
+                (animalMaster.personalityTag, interactionType),
               ),
             );
+
+            // ハプティクス（中程度）
+            if (ref.watch(hapticEnabledProvider)) {
+              HapticFeedback.mediumImpact();
+            }
+
+            // 反応演出ダイアログ表示
+            _showInteractionReactionDialog(
+              context,
+              ref,
+              animalMaster.name,
+              reactionPath,
+              animalMaster.id,
+            );
+
             // 画面リセット（再ロード）
-            ref.refresh(userAnimalProvider(userAnimal.animalId));
-            ref.refresh(hasInteractedTodayProvider(userAnimal.animalId));
+            Future.delayed(const Duration(seconds: 2), () {
+              ref.refresh(userAnimalProvider(userAnimal.animalId));
+              ref.refresh(hasInteractedTodayProvider(userAnimal.animalId));
+            });
           });
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -359,6 +383,96 @@ class AnimalDetailScreen extends ConsumerWidget {
             ),
           );
         }
+      },
+    );
+  }
+
+  /// ボタンラベルから交流タイプを判定
+  String _getInteractionType(String label) {
+    if (label == 'エサをあげる') {
+      return 'feed';
+    } else if (label == 'なでなで') {
+      return 'pet';
+    } else if (label == '遊ぶ') {
+      return 'play';
+    }
+    return 'feed'; // デフォルト
+  }
+
+  /// 交流リアクション演出ダイアログ
+  void _showInteractionReactionDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String animalName,
+    String animationPath,
+    String animalId,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Lottieアニメーション表示
+                LottieAnimationWidget(
+                  assetPath: animationPath,
+                  width: 250,
+                  height: 250,
+                  repeat: false,
+                  autoplay: true,
+                  onComplete: () {
+                    // アニメーション完了後にダイアログを閉じる
+                    Navigator.of(context).pop();
+                  },
+                ),
+                const SizedBox(height: 20),
+                // メッセージ
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '$animalName が喜んでいる！',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'なつき度が上がった！',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

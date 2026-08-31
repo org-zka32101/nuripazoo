@@ -4,8 +4,49 @@ import 'package:nuripazu/viewmodels/index.dart';
 
 /// 動物園ホーム画面
 /// ユーザーが集めた動物が住む園を眺める
-class HomeScreen extends ConsumerWidget {
+/// Phase 6D: BGM環境音をループ再生
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // BGM 初期化（園全体のループ再生）
+    Future.microtask(() {
+      _initializeBGM();
+    });
+  }
+
+  @override
+  void dispose() {
+    // BGMの停止はAppShellで一括管理（画面切り替え時の音量制御）
+    super.dispose();
+  }
+
+  /// BGM 初期化・再生
+  void _initializeBGM() {
+    // BGM有効かつ未再生の場合、再生開始
+    if (ref.watch(bgmEnabledProvider)) {
+      final currentBGM = ref.watch(currentBGMProvider);
+      if (currentBGM == null) {
+        const bgmPath = 'assets/sounds/bgm/zoo_ambient_loop.mp3';
+        ref.read(currentBGMProvider.notifier).setBGM(bgmPath);
+        // TODO: audioplayers パッケージ統合後、実装
+        // final audioPlayer = AudioPlayer();
+        // await audioPlayer.play(
+        //   AssetSource(bgmPath),
+        //   volume: 0.3, // 環境音なので音量低め
+        // );
+        // // ループ再生設定
+        // await audioPlayer.setReleaseMode(ReleaseMode.loop);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
