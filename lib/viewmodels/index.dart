@@ -9,3 +9,6 @@ export 'puzzle_provider.dart';
 
 // Affection & Interaction
 export 'affection_provider.dart';
+
+// Monetization
+export 'monetization_provider.dart';

@@ -257,9 +257,30 @@ class PuzzleScreen extends ConsumerWidget {
                     .read(
                       registerNewAnimalProvider(puzzleState.animalId).future,
                     )
-                    .then((_) {
-                  // ホーム画面へ遷移
-                  Navigator.of(context).pushReplacementNamed('/home');
+                    .then((_) async {
+                  // 動物数を確認してペイウォール判定
+                  final animalCount = await ref
+                      .read(userAnimalCountProvider.future);
+
+                  if (context.mounted) {
+                    // 2体目完成時にペイウォール表示
+                    if (animalCount == 2) {
+                      Navigator.of(context).pushNamed(
+                        '/paywall',
+                        arguments: {
+                          'animalId': puzzleState.animalId,
+                          'onDismiss': () {
+                            Navigator.of(context)
+                                .pushReplacementNamed('/home');
+                          },
+                        },
+                      );
+                    } else {
+                      // 1体目またはそれ以降は通常フロー
+                      Navigator.of(context)
+                          .pushReplacementNamed('/home');
+                    }
+                  }
                 });
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(

@@ -8,6 +8,8 @@ import 'views/home_screen.dart';
 import 'views/animal_detail_screen.dart';
 import 'views/app_shell.dart';
 import 'views/herd_scene_screen.dart';
+import 'views/paywall_screen.dart';
+import 'views/cosmetic_shop_screen.dart';
 import 'viewmodels/index.dart';
 
 void main() async {
@@ -84,6 +86,14 @@ class NuripazuApp extends ConsumerWidget {
             animalIds: args?['animalIds'] ?? [],
           );
         },
+        '/paywall': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+          return PaywallScreen(
+            animalId: args?['animalId'] as String?,
+            onDismiss: args?['onDismiss'] as VoidCallback?,
+          );
+        },
+        '/cosmetic_shop': (context) => const CosmeticShopScreen(),
       },
     );
   }

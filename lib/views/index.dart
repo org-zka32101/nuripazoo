@@ -7,3 +7,5 @@ export 'collection_screen.dart';
 export 'settings_screen.dart';
 export 'app_shell.dart';
 export 'herd_scene_screen.dart';
+export 'paywall_screen.dart';
+export 'cosmetic_shop_screen.dart';
