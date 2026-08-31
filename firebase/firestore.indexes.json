@@ -1,0 +1,43 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "animals",
+      "queryScope": "Collection",
+      "fields": [
+        {
+          "fieldPath": "unlockedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "affectionLevel",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "animals",
+      "queryScope": "Collection",
+      "fields": [
+        {
+          "fieldPath": "lastInteractedAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "puzzle_sessions",
+      "queryScope": "Collection",
+      "fields": [
+        {
+          "fieldPath": "startedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "completedAt",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

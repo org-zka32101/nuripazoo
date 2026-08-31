@@ -1,0 +1,66 @@
+# Flutter
+/build/
+/ios/Podfile.lock
+/ios/Flutter/Flutter.podspec
+/.dart_tool/
+/.flutter-plugins
+/.flutter-plugins-dependencies
+/pubspec.lock
+/.packages
+/android/local.properties
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+
+# Build artifacts
+*.o
+*.a
+*.lib
+*.so
+*.dylib
+*.exe
+*.out
+*.app
+*.ipa
+*.apk
+*.aab
+
+# Gradle
+/android/.gradle/
+/android/gradle/
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+
+# iOS
+/ios/Pods/
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/GeneratedPluginRegistrant.*
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.xcworkspace/xcuserdata/
+
+# Firebase
+.firebase/
+.firebaserc
+
+# Coverage
+coverage/
+
+# Node
+node_modules/
+npm-debug.log
+
+# OS
+Thumbs.db
+.DS_Store
