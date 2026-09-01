@@ -188,4 +188,7 @@ class AnimationService {
     // 動物種ごとの個別音声
     return 'assets/sounds/animals/$animalId/${interactionType}_cry.mp3';
   }
+
+  /// BGM（環境音ループ）
+  static const String bgmPath = 'assets/sounds/bgm/zoo_ambient_loop.mp3';
 }

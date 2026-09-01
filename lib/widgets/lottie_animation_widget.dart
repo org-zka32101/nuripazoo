@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 /// Lottie アニメーション表示ウィジェット
-/// 【実装予定】lottie パッケージで Lottie ファイルをレンダリング
+/// lottie パッケージで Lottie ファイルをレンダリング
 ///
 /// 使用例:
 /// ```dart
@@ -73,48 +74,20 @@ class _LottieAnimationWidgetState extends State<LottieAnimationWidget>
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Lottie パッケージのインポートと実装
-    // import 'package:lottie/lottie.dart';
-    //
-    // return Lottie.asset(
-    //   widget.assetPath,
-    //   controller: _controller,
-    //   width: widget.width,
-    //   height: widget.height,
-    //   repeat: widget.repeat,
-    //   onLoaded: (composition) {
-    //     _controller.duration = composition.duration;
-    //   },
-    // );
-
-    // 暫定実装: プレースホルダー
-    return Container(
+    return SizedBox(
       width: widget.width,
       height: widget.height,
-      decoration: BoxDecoration(
-        color: Colors.orange.shade100,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.animation,
-              size: 48,
-              color: Colors.orange,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              widget.assetPath.split('/').last,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.orange,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+      child: Lottie.asset(
+        widget.assetPath,
+        controller: _controller,
+        width: widget.width,
+        height: widget.height,
+        repeat: widget.repeat,
+        onLoaded: (composition) {
+          _controller.duration = composition.duration;
+        },
+        frameRate: FrameRate.composition,
+        animate: widget.autoplay,
       ),
     );
   }
