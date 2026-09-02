@@ -55,9 +55,27 @@ flutter:
 
   # Assets
   assets:
+    # Images
     - assets/images/
+
+    # Lottie Animations
     - assets/lottie/
+    - assets/lottie/reactions/
+    - assets/lottie/interactions/
+    - assets/lottie/herd_bonus/
+    - assets/lottie/special_poses/
+    - assets/lottie/completion/
+
+    # Sounds
     - assets/sounds/
+    - assets/sounds/ui/
+    - assets/sounds/affection/
+    - assets/sounds/puzzle/
+    - assets/sounds/bgm/
+    - assets/sounds/animals/
+    - assets/sounds/animals/animal_001/
+    - assets/sounds/animals/animal_002/
+    - assets/sounds/animals/animal_003/
 
   # Fonts
   fonts:
