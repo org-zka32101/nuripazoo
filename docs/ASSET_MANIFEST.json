@@ -1,0 +1,179 @@
+{
+  "project": "nuripazu",
+  "version": "1.0.0",
+  "generated_at": "2026-09-02",
+  "description": "Complete asset inventory for Nuripazu - Animal Coloring Puzzle Zoo",
+
+  "summary": {
+    "total_animations": 52,
+    "total_sounds": 16,
+    "total_animals": 3,
+    "estimated_size_mb": 3.6,
+    "status": "placeholder_phase"
+  },
+
+  "animations": {
+    "reactions": {
+      "category": "Affection Level Change Reactions",
+      "count": 25,
+      "duration_seconds": 2,
+      "frame_rate": 30,
+      "resolution": "512x512",
+      "loop": false,
+      "files": {
+        "sweettooth": ["happy_lv1", "happy_lv2", "happy_lv3", "happy_lv4", "sad_decline"],
+        "independent": ["cool_lv1", "cool_lv2", "cool_lv3", "cool_lv4", "distant_decline"],
+        "shy": ["bashful_lv1", "bashful_lv2", "bashful_lv3", "bashful_lv4", "scared_decline"],
+        "playful": ["energetic_lv1", "energetic_lv2", "energetic_lv3", "energetic_lv4", "sulky_decline"],
+        "calm": ["peaceful_lv1", "peaceful_lv2", "peaceful_lv3", "peaceful_lv4", "worried_decline"]
+      }
+    },
+
+    "interactions": {
+      "category": "Daily Interaction Reactions",
+      "count": 15,
+      "duration_seconds": 3,
+      "frame_rate": 30,
+      "resolution": "512x512",
+      "loop": false,
+      "files": {
+        "sweettooth": ["eating_happy", "nuzzle", "playful_excited"],
+        "independent": ["eating_coolly", "standoffish", "aloof_play"],
+        "shy": ["eating_nervously", "flinches", "hesitant_play"],
+        "playful": ["gobbling", "jumpy", "boundless_energy"],
+        "calm": ["eating_slowly", "content_purr", "leisurely_play"]
+      }
+    },
+
+    "herd_bonus": {
+      "category": "Herd Formation Celebration",
+      "count": 5,
+      "duration_seconds": 4,
+      "frame_rate": 30,
+      "resolution": "512x512",
+      "loop": false,
+      "files": ["forest_celebration", "ocean_celebration", "grassland_celebration", "mountain_celebration", "sky_celebration"]
+    },
+
+    "special_poses": {
+      "category": "Level 4 Exclusive Poses",
+      "count": 5,
+      "duration_seconds": 2,
+      "frame_rate": 30,
+      "resolution": "512x512",
+      "loop": false,
+      "files": ["sweettooth_princess", "independent_majestic", "shy_confident", "playful_superhero", "calm_zen_master"]
+    },
+
+    "completion": {
+      "category": "Puzzle Completion Sequence",
+      "count": 2,
+      "duration_seconds": 3,
+      "frame_rate": 30,
+      "resolution": "512x512",
+      "loop": false,
+      "notes": "celebration_confetti (2s) → animal_appear (1s)",
+      "files": ["celebration_confetti", "animal_appear"]
+    }
+  },
+
+  "sounds": {
+    "ui": {
+      "category": "User Interface Sound Effects",
+      "count": 3,
+      "codec": "MP3/AAC",
+      "sample_rate": "44.1kHz or 48kHz",
+      "bitrate": "128kbps",
+      "channels": "Mono",
+      "target_size_kb": 20,
+      "files": {
+        "tap.mp3": "Button tap sound",
+        "success.mp3": "Positive result feedback",
+        "failure.mp3": "Negative result feedback"
+      }
+    },
+
+    "affection": {
+      "category": "Affection Level Change Sounds",
+      "count": 2,
+      "codec": "MP3/AAC",
+      "sample_rate": "44.1kHz or 48kHz",
+      "bitrate": "128kbps",
+      "channels": "Mono",
+      "target_size_kb": 20,
+      "files": {
+        "level_up.mp3": "Affection level increase celebration",
+        "level_down.mp3": "Affection level decrease sadness"
+      }
+    },
+
+    "puzzle": {
+      "category": "Puzzle Completion Sound",
+      "count": 1,
+      "codec": "MP3/AAC",
+      "sample_rate": "44.1kHz or 48kHz",
+      "bitrate": "128kbps",
+      "channels": "Mono",
+      "target_size_kb": 20,
+      "files": {
+        "completion.mp3": "Puzzle completion achievement sound"
+      }
+    },
+
+    "bgm": {
+      "category": "Background Music - Zoo Ambient",
+      "count": 1,
+      "codec": "MP3/AAC",
+      "sample_rate": "44.1kHz or 48kHz",
+      "bitrate": "96-128kbps",
+      "channels": "Stereo",
+      "target_size_kb": 500,
+      "duration_seconds": 60,
+      "notes": "Seamless loopable ambient sound, minimum 60 seconds",
+      "files": {
+        "zoo_ambient_loop.mp3": "Zoo environment background music"
+      }
+    },
+
+    "animals": {
+      "category": "Animal Vocalizations",
+      "count": 9,
+      "codec": "MP3/AAC",
+      "sample_rate": "44.1kHz or 48kHz",
+      "bitrate": "96-128kbps",
+      "channels": "Mono",
+      "target_size_kb": 50,
+      "duration_seconds": "0.5-1.5",
+      "animals": {
+        "animal_001": ["happy_cry.mp3", "sad_cry.mp3", "neutral_cry.mp3"],
+        "animal_002": ["happy_cry.mp3", "sad_cry.mp3", "neutral_cry.mp3"],
+        "animal_003": ["happy_cry.mp3", "sad_cry.mp3", "neutral_cry.mp3"]
+      }
+    }
+  },
+
+  "implementation_status": {
+    "phase_8a_lottie_placeholders": "✅ COMPLETED",
+    "phase_8b_sound_structure": "✅ COMPLETED",
+    "phase_8c_manifest": "✅ COMPLETED",
+    "phase_8d_petitai_integration": "⏳ PENDING",
+    "phase_8e_asset_replacement": "⏳ PENDING",
+    "phase_8f_build_verification": "⏳ PENDING"
+  },
+
+  "next_steps": [
+    "Generate actual Lottie animations via petit_ai or Illustrator/Figma",
+    "Record or source real audio files",
+    "Replace placeholder files with production assets",
+    "Run comprehensive sound/animation testing",
+    "Verify app bundle size stays within limits",
+    "Proceed to Phase 9: TestFlight and App Store submission"
+  ],
+
+  "file_paths": {
+    "animations": "assets/lottie/",
+    "sounds": "assets/sounds/",
+    "documentation": "docs/PHASE_8_ASSET_GENERATION.md",
+    "generator_script": "scripts/generate_lottie_placeholders.dart"
+  }
+}
